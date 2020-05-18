@@ -1,0 +1,17 @@
+{
+  "name": "ExpoPomodoro",
+  "displayName": "ExpoPomodoro",
+  "expo": {
+    "name": "ExpoPomodoro",
+    "slug": "ExpoPomodoro",
+    "version": "1.0.0",
+    "platforms": [
+      "ios",
+      "android",
+      "web"
+    ],
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  }
+}
