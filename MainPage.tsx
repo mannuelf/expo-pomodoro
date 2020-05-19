@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   H1,
   Header,
@@ -23,9 +23,11 @@ import {
 import { StyleSheet, View, ScrollView } from "react-native";
 
 const MainPage = () => {
+  const initialTime = new Date(Date.now() + 25 * 60000);
   const [mode, setMode] = useState("FOCUS");
-  const [time, setTime] = useState(0);
+  const [time, setTime] = useState(initialTime);
   const [isCounting, setCounting] = useState(false);
+  let timeLeft = initialTime;
   const MODES = {
     FOCUS: {
       name: "FOCUS",
@@ -35,31 +37,44 @@ const MainPage = () => {
     SHORT: {
       name: "SHORT",
       time: 5,
-      text: "Get a short break",
+      text: "Get a cup of coffee",
     },
     LONG: {
       name: "LONG",
       time: 15,
-      text: "Get a long break",
+      text: "Go for a walk",
     },
   };
 
   const changeMode = (type: { name: string; time: number }) => {
     setCounting(false);
     setMode(type.name);
-    setTime(type.time);
+    setTime(minToTimestamp(type.time).getTime());
+  };
+
+  const handlePause = () => {
+    setCounting(!isCounting);
   };
 
   const handleReset = () => {
     const targetTime = MODES[mode].time;
-    setTime(targetTime);
+
+    setTime(minToTimestamp(targetTime));
   };
 
   const minToTimestamp = (mins: number) => {
-    const timestamp = new Date();
-    timestamp.setMinutes(mins);
-    return timestamp;
+    return new Date(Date.now() + mins * 60000);
   };
+
+  useEffect(() => {
+    const counter = setInterval(() => {
+      if (isCounting) {
+        setTime(time - 1000);
+      }
+      timeLeft = new Date(time - Date.now());
+    }, 1000);
+    return () => clearInterval(counter);
+  }, [time, isCounting]);
   return (
     <Container>
       <Header>
@@ -111,13 +126,14 @@ const MainPage = () => {
       <ScrollView contentContainerStyle={styles.center}>
         <View style={styles.title}>
           <H1>{MODES[mode].text}</H1>
-          <H1 style={styles.countdown}>{time}</H1>
+          <H1 style={styles.countdown}>
+            {timeLeft.getMinutes()}:{timeLeft.getSeconds()}
+          </H1>
         </View>
         <View style={styles.controls}>
-          <Button>
-            <Icon name="play" />
-            <Icon name="pause" />
-            <Text>Start / pause</Text>
+          <Button onPress={handlePause}>
+            <Icon name={isCounting ? "pause" : "play"} />
+            <Text>{isCounting ? "Pause" : "Start"}</Text>
           </Button>
           <Button onPress={handleReset} danger>
             <Icon name="refresh" />
