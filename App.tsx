@@ -1,40 +1,33 @@
-import React, { useState } from "react";
-import {
-  StyleSheet,
-  Image,
-  TextInput,
-  ScrollView,
-  Text,
-  View,
-  Button,
-} from "react-native";
-
-export default function App() {
-  const [text, setText] = useState("");
-  return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text>Tap the button to start/stop the clock.</Text>
-      <TextInput
-        defaultValue="20"
-        onChangeText={(e) => setText(e)}
-        placeholder="hello"
-      />
-      <Button title="TOGGLE COUNTER" />
-      <Text>
-        {text
-          .split(" ")
-          .map((word) => word && "🍕")
-          .join(" ")}
-      </Text>
-    </ScrollView>
-  );
+import React from "react";
+import { AppLoading } from "expo";
+import * as Font from "expo-font";
+import { Ionicons } from "@expo/vector-icons";
+import MainPage from "./MainPage";
+interface MyState {
+  isReady: Boolean;
 }
+export default class App extends React.Component<any, MyState> {
+  constructor(props: any) {
+    super(props);
+    this.state = {
+      isReady: false,
+    };
+  }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});
+  async componentDidMount() {
+    await Font.loadAsync({
+      Roboto: require("native-base/Fonts/Roboto.ttf"),
+      Roboto_medium: require("native-base/Fonts/Roboto_medium.ttf"),
+      ...Ionicons.font,
+    });
+    this.setState({ isReady: true });
+  }
+
+  render() {
+    if (!this.state.isReady) {
+      return <AppLoading />;
+    }
+
+    return <MainPage />;
+  }
+}
