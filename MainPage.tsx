@@ -23,8 +23,43 @@ import {
 import { StyleSheet, View, ScrollView } from "react-native";
 
 const MainPage = () => {
-  const [mode, setMode] = useState("focus");
+  const [mode, setMode] = useState("FOCUS");
   const [time, setTime] = useState(0);
+  const [isCounting, setCounting] = useState(false);
+  const MODES = {
+    FOCUS: {
+      name: "FOCUS",
+      time: 25,
+      text: "Keep focused for",
+    },
+    SHORT: {
+      name: "SHORT",
+      time: 5,
+      text: "Get a short break",
+    },
+    LONG: {
+      name: "LONG",
+      time: 15,
+      text: "Get a long break",
+    },
+  };
+
+  const changeMode = (type: { name: string; time: number }) => {
+    setCounting(false);
+    setMode(type.name);
+    setTime(type.time);
+  };
+
+  const handleReset = () => {
+    const targetTime = MODES[mode].time;
+    setTime(targetTime);
+  };
+
+  const minToTimestamp = (mins: number) => {
+    const timestamp = new Date();
+    timestamp.setMinutes(mins);
+    return timestamp;
+  };
   return (
     <Container>
       <Header>
@@ -39,35 +74,44 @@ const MainPage = () => {
         <Right />
       </Header>
       <View>
-        <ListItem onClick={() => setMode("focus")} selected={mode === "focus"}>
+        <ListItem
+          onPress={() => changeMode(MODES.FOCUS)}
+          selected={mode === "FOCUS"}
+        >
           <Left>
             <Text>Focus</Text>
           </Left>
           <Right>
-            <Radio selected={mode === "focus"} />
+            <Radio selected={mode === "FOCUS"} />
           </Right>
         </ListItem>
-        <ListItem onClick={() => setMode("short")} selected={mode === "short"}>
+        <ListItem
+          onPress={() => changeMode(MODES.SHORT)}
+          selected={mode === "SHORT"}
+        >
           <Left>
             <Text>Short Break</Text>
           </Left>
           <Right>
-            <Radio selected={mode === "short"} />
+            <Radio selected={mode === "SHORT"} />
           </Right>
         </ListItem>
-        <ListItem onClick={() => setMode("long")} selected={mode === "long"}>
+        <ListItem
+          onPress={() => changeMode(MODES.LONG)}
+          selected={mode === "LONG"}
+        >
           <Left>
             <Text>Long Break</Text>
           </Left>
           <Right>
-            <Radio selected={mode === "long"} />
+            <Radio selected={mode === "LONG"} />
           </Right>
         </ListItem>
       </View>
       <ScrollView contentContainerStyle={styles.center}>
         <View style={styles.title}>
-          <H1>Focus</H1>
-          <H1 style={styles.countdown}>24:55</H1>
+          <H1>{MODES[mode].text}</H1>
+          <H1 style={styles.countdown}>{time}</H1>
         </View>
         <View style={styles.controls}>
           <Button>
@@ -75,7 +119,7 @@ const MainPage = () => {
             <Icon name="pause" />
             <Text>Start / pause</Text>
           </Button>
-          <Button danger>
+          <Button onPress={handleReset} danger>
             <Icon name="refresh" />
             <Text>Reset</Text>
           </Button>
