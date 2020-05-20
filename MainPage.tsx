@@ -26,16 +26,19 @@ const MainPage = () => {
   const MODES = {
     FOCUS: {
       name: "FOCUS",
+      title: "Focus",
       time: 25,
       text: "Keep focused for",
     },
     SHORT: {
       name: "SHORT",
+      title: "Short break",
       time: 5,
       text: "Get a cup of coffee",
     },
     LONG: {
       name: "LONG",
+      title: "Long break",
       time: 15,
       text: "Go for a walk",
     },
@@ -50,6 +53,22 @@ const MainPage = () => {
     setMode(type.name);
     setTime(minToTimestamp(type.time).getTime());
   };
+
+  const ListRadioItems = Object.values(MODES).map((el) => {
+    return (
+      <ListItem
+        onPress={() => changeMode(MODES[el.name])}
+        selected={mode === el.name}
+      >
+        <Left>
+          <Text>{el.title}</Text>
+        </Left>
+        <Right>
+          <Radio selected={mode === el.name} />
+        </Right>
+      </ListItem>
+    );
+  });
 
   const togglePause = () => {
     setCounting(!isCounting);
@@ -94,41 +113,7 @@ const MainPage = () => {
         </Body>
         <Right />
       </Header>
-      <View>
-        <ListItem
-          onPress={() => changeMode(MODES.FOCUS)}
-          selected={mode === "FOCUS"}
-        >
-          <Left>
-            <Text>Focus</Text>
-          </Left>
-          <Right>
-            <Radio selected={mode === "FOCUS"} />
-          </Right>
-        </ListItem>
-        <ListItem
-          onPress={() => changeMode(MODES.SHORT)}
-          selected={mode === "SHORT"}
-        >
-          <Left>
-            <Text>Short Break</Text>
-          </Left>
-          <Right>
-            <Radio selected={mode === "SHORT"} />
-          </Right>
-        </ListItem>
-        <ListItem
-          onPress={() => changeMode(MODES.LONG)}
-          selected={mode === "LONG"}
-        >
-          <Left>
-            <Text>Long Break</Text>
-          </Left>
-          <Right>
-            <Radio selected={mode === "LONG"} />
-          </Right>
-        </ListItem>
-      </View>
+      <View>{ListRadioItems}</View>
       <ScrollView contentContainerStyle={styles.center}>
         <View style={styles.title}>
           <H1>{MODES[mode].text}</H1>
