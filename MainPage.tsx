@@ -23,10 +23,6 @@ import {
 import { StyleSheet, View, ScrollView } from "react-native";
 
 const MainPage = () => {
-  const initialTime = new Date(Date.now() + 25 * 60000);
-  const [mode, setMode] = useState("FOCUS");
-  const [time, setTime] = useState(initialTime);
-  const [isCounting, setCounting] = useState(false);
   const MODES = {
     FOCUS: {
       name: "FOCUS",
@@ -35,7 +31,7 @@ const MainPage = () => {
     },
     SHORT: {
       name: "SHORT",
-      time: 0.02,
+      time: 5,
       text: "Get a cup of coffee",
     },
     LONG: {
@@ -44,6 +40,10 @@ const MainPage = () => {
       text: "Go for a walk",
     },
   };
+  const initialTime = new Date(25 * 60000);
+  const [mode, setMode] = useState("FOCUS");
+  const [time, setTime] = useState(initialTime);
+  const [isCounting, setCounting] = useState(false);
 
   const changeMode = (type: { name: string; time: number }) => {
     setCounting(false);
