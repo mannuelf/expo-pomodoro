@@ -54,9 +54,10 @@ const MainPage = () => {
     setTime(minToTimestamp(type.time).getTime());
   };
 
-  const ListRadioItems = Object.values(MODES).map((el) => {
+  const ListRadioItems = Object.values(MODES).map((el, index) => {
     return (
       <ListItem
+	key={index}
         onPress={() => changeMode(MODES[el.name])}
         selected={mode === el.name}
       >
