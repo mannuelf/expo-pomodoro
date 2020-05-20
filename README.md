@@ -15,6 +15,7 @@ Mobile app built in Expo env (React native + TypeScript) for learning purpose
 * [typescript](https://github.com/microsoft/TypeScript)
 
 ## Further plans
+* Poor TypeScript usage
 * Lack of tests
 * Design a new UI
 * Add ability to set custom time interval
