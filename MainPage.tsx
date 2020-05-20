@@ -27,7 +27,6 @@ const MainPage = () => {
   const [mode, setMode] = useState("FOCUS");
   const [time, setTime] = useState(initialTime);
   const [isCounting, setCounting] = useState(false);
-  let timeLeft = initialTime;
   const MODES = {
     FOCUS: {
       name: "FOCUS",
@@ -36,7 +35,7 @@ const MainPage = () => {
     },
     SHORT: {
       name: "SHORT",
-      time: 5,
+      time: 0.02,
       text: "Get a cup of coffee",
     },
     LONG: {
@@ -52,39 +51,46 @@ const MainPage = () => {
     setTime(minToTimestamp(type.time).getTime());
   };
 
-  const handlePause = () => {
+  const togglePause = () => {
     setCounting(!isCounting);
   };
 
   const handleReset = () => {
     const targetTime = MODES[mode].time;
-
+    setCounting(false);
     setTime(minToTimestamp(targetTime));
   };
 
   const minToTimestamp = (mins: number) => {
-    return new Date(Date.now() + mins * 60000);
+    return new Date(mins * 60000);
+  };
+
+  const handleFinished = () => {
+    alert("Poof");
   };
 
   useEffect(() => {
     const counter = setInterval(() => {
       if (isCounting) {
-        setTime(time - 1000);
+        if (
+          new Date(time).getSeconds() === 0 &&
+          new Date(time).getMinutes() === 0
+        ) {
+          togglePause();
+          handleFinished();
+        } else {
+          setTime(time - 1000);
+        }
       }
-      timeLeft = new Date(time - Date.now());
     }, 1000);
     return () => clearInterval(counter);
   }, [time, isCounting]);
   return (
     <Container>
       <Header>
-        <Left>
-          <Button transparent>
-            <Icon name="menu" />
-          </Button>
-        </Left>
+        <Left></Left>
         <Body>
-          <Title>EXPOmodoro Timer</Title>
+          <Title>Pomodoro Timer</Title>
         </Body>
         <Right />
       </Header>
@@ -127,11 +133,17 @@ const MainPage = () => {
         <View style={styles.title}>
           <H1>{MODES[mode].text}</H1>
           <H1 style={styles.countdown}>
-            {timeLeft.getMinutes()}:{timeLeft.getSeconds()}
+            {new Date(time).getMinutes().toString().length < 2
+              ? `0${new Date(time).getMinutes()}`
+              : new Date(time).getMinutes()}
+            :
+            {new Date(time).getSeconds().toString().length < 2
+              ? `0${new Date(time).getSeconds()}`
+              : new Date(time).getSeconds()}
           </H1>
         </View>
         <View style={styles.controls}>
-          <Button onPress={handlePause}>
+          <Button onPress={togglePause}>
             <Icon name={isCounting ? "pause" : "play"} />
             <Text>{isCounting ? "Pause" : "Start"}</Text>
           </Button>
